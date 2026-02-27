@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@source "../index.html";
+@source "./**/*.js";
+
+:root {
+  --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f3f4f6;
+  /* Fallback */
+}
