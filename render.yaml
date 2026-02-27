@@ -14,7 +14,7 @@ services:
         sync: false # You will need to set this in the Render Dashboard
 
   # Frontend React App
-  - type: static
+  - type: web
     name: apna-bank-frontend
     env: static
     rootDir: my-react-app
