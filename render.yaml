@@ -1,7 +1,7 @@
 services:
   # Backend Server
   - type: web
-    name: apna-bank-server
+    name: apna-bank-api
     env: node
     plan: free
     rootDir: server
@@ -15,7 +15,7 @@ services:
 
   # Frontend React App
   - type: web
-    name: apna-bank-frontend
+    name: apna-bank
     env: static
     rootDir: my-react-app
     buildCommand: npm install && npm run build
@@ -24,7 +24,7 @@ services:
       - key: VITE_API_URL
         fromService:
           type: web
-          name: apna-bank-server
+          name: apna-bank-api
           property: host
     routes:
       - type: rewrite
