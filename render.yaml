@@ -20,6 +20,12 @@ services:
     rootDir: my-react-app
     buildCommand: npm install && npm run build
     staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: apna-bank-server
+          property: host
     routes:
       - type: rewrite
         source: /*
