@@ -1,15 +1,48 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://192.168.1.4:5000/api';
+const resolveApiUrl = () => {
+    let url = import.meta.env.VITE_API_URL || 'http://192.168.1.4:5000';
+    // Ensure absolute URL and ends with /api
+    if (!url.startsWith('http')) {
+        // If it's a relative hostname provided by Render (like 'apna-bank-api:10000')
+        // we can't use it directly in the browser if it's on a static site.
+        // If it's just 'apna-bank-api', it might be meant for a proxy.
+        // But for public deployment, we want the public URL.
+    }
+
+    // Check if the URL already has /api
+    if (!url.endsWith('/api')) {
+        url = url.endsWith('/') ? `${url}api` : `${url}/api`;
+    }
+    return url;
+};
+
+const API_URL = resolveApiUrl();
 
 const handleResponse = async (res, defaultError) => {
     if (!res.ok) {
+        let errorMessage = defaultError;
         try {
             const error = await res.json();
-            throw new Error(error.message || defaultError);
+            errorMessage = error.message || defaultError;
         } catch (e) {
-            throw new Error(defaultError);
+            // Not a JSON error or empty
         }
+        throw new Error(errorMessage);
     }
-    return res.json();
+
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+        // Not JSON, and the request was OK. This usually happens when hit by a proxy/rewrite returning HTML.
+        // Or if the response is empty.
+        const text = await res.text();
+        if (!text) return {}; // Return empty object for 204 or empty success responses
+        throw new Error('Server returned an invalid response. Please try again later.');
+    }
+
+    try {
+        return await res.json();
+    } catch (e) {
+        throw new Error('Failed to parse server response.');
+    }
 };
 
 export const loginUser = async (email, password) => {

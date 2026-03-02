@@ -14,9 +14,8 @@ services:
         sync: false # You will need to set this in the Render Dashboard
 
   # Frontend React App
-  - type: web
+  - type: static
     name: apna-bank
-    env: static
     rootDir: my-react-app
     buildCommand: npm install && npm run build
     staticPublishPath: dist
@@ -25,7 +24,7 @@ services:
         fromService:
           type: web
           name: apna-bank-api
-          property: host
+          property: url
     routes:
       - type: rewrite
         source: /*
