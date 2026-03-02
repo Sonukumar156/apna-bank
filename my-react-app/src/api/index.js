@@ -16,6 +16,7 @@ const resolveApiUrl = () => {
 };
 
 const API_URL = resolveApiUrl();
+console.log('📡 System API connected to:', API_URL);
 
 const handleResponse = async (res, defaultError) => {
     if (!res.ok) {
@@ -31,17 +32,18 @@ const handleResponse = async (res, defaultError) => {
 
     const contentType = res.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
-        // Not JSON, and the request was OK. This usually happens when hit by a proxy/rewrite returning HTML.
-        // Or if the response is empty.
-        const text = await res.text();
-        if (!text) return {}; // Return empty object for 204 or empty success responses
-        throw new Error('Server returned an invalid response. Please try again later.');
+        // If we hit a proxy or static site catch-all, it returns 200 OK + HTML but it's an error for us.
+        throw new Error('API server returned an invalid format. Please check your deployment settings.');
     }
 
     try {
-        return await res.json();
+        const data = await res.json();
+        if (!data || (Object.keys(data).length === 0 && res.status !== 204)) {
+            throw new Error('Received an empty response from server.');
+        }
+        return data;
     } catch (e) {
-        throw new Error('Failed to parse server response.');
+        throw new Error(e.message || 'Failed to parse server response.');
     }
 };
 
