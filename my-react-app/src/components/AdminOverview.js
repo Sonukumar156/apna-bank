@@ -208,7 +208,7 @@ export default function AdminOverview({ stats, members = [], onViewReceipt }) {
                                         <td className="px-6 lg:px-10 py-5 lg:py-6">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center font-bold text-slate-500 text-xs flex-shrink-0">
-                                                    {item.memberName.charAt(0)}
+                                                    {item?.memberName?.charAt(0) || '?'}
                                                 </div>
                                                 <div className="min-w-0">
                                                     <p className="text-sm font-bold text-slate-900 truncate">{item.memberName}</p>

@@ -72,7 +72,7 @@ export default function AdminPaymentHistory({ members = [], onViewReceipt }) {
                                         <td className="px-6 lg:px-10 py-5 lg:py-8">
                                             <div className="flex items-center gap-3 lg:gap-4">
                                                 <div className="w-10 h-10 lg:w-12 lg:h-12 bg-slate-900 text-white rounded-xl lg:rounded-2xl flex items-center justify-center font-bold text-base lg:text-lg shadow-lg">
-                                                    {item.memberName.charAt(0)}
+                                                    {item?.memberName?.charAt(0) || '?'}
                                                 </div>
                                                 <div className="min-w-0">
                                                     <p className="text-sm lg:text-base font-black text-slate-900 leading-tight truncate">{item.memberName}</p>

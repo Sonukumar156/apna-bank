@@ -226,7 +226,7 @@ export default function Dashboard({ user, onLogout }) {
                             <p className="text-[10px] lg:text-xs font-black text-blue-600 uppercase tracking-wider">{currentUser.role}</p>
                         </div>
                         <div className="w-10 h-10 lg:w-12 lg:h-12 bg-slate-900 text-white rounded-xl lg:rounded-2xl flex items-center justify-center font-bold text-lg lg:text-xl shadow-xl group-hover:scale-105 transition-all">
-                            {currentUser.name.charAt(0)}
+                            {currentUser?.name?.charAt(0) || 'U'}
                         </div>
                     </div>
                 </header>
@@ -343,7 +343,7 @@ export default function Dashboard({ user, onLogout }) {
                                                 <div key={i} className="px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
                                                     <div className="flex items-center gap-5">
                                                         <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center font-bold text-slate-400 text-lg">
-                                                            {m.name.charAt(0)}
+                                                            {m?.name?.charAt(0) || '?'}
                                                         </div>
                                                         <div>
                                                             <p className="font-black text-slate-900 text-xl leading-tight mb-1">{m.name}</p>

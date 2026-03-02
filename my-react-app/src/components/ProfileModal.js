@@ -82,7 +82,7 @@ export default function ProfileModal({ user, currentUserRole, onClose, onUpdate 
                         <div className="text-center md:text-left space-y-6">
                             <div className="w-24 h-24 md:w-32 md:h-32 bg-white/5 border border-white/10 rounded-3xl p-1 mx-auto md:mx-0 shadow-2xl">
                                 <div className="w-full h-full bg-slate-800 rounded-2xl flex items-center justify-center text-4xl md:text-5xl font-black text-white italic">
-                                    {user.name.charAt(0)}
+                                    {user?.name?.charAt(0) || 'U'}
                                 </div>
                             </div>
                             <div>

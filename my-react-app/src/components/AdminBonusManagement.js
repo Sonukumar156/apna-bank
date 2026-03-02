@@ -118,7 +118,7 @@ export default function AdminBonusManagement({ members = [], onRefresh }) {
                             <div key={i} className="flex items-center justify-between p-4 lg:p-5 rounded-2xl lg:rounded-3xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group">
                                 <div className="flex items-center gap-3 lg:gap-4 min-w-0">
                                     <div className="w-8 h-8 lg:w-10 lg:h-10 bg-slate-900 text-white rounded-lg lg:rounded-xl flex items-center justify-center font-bold text-[10px] lg:text-xs flex-shrink-0">
-                                        {m.name.charAt(0)}
+                                        {m?.name?.charAt(0) || '?'}
                                     </div>
                                     <div className="min-w-0">
                                         <p className="text-xs lg:text-sm font-black text-slate-800 leading-none truncate">{m.name}</p>
