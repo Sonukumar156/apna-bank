@@ -211,7 +211,7 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
                 </div>
             )}
 
-            <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[800px]">
+            <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px] md:min-h-[800px]">
 
                 {/* Visual Sidebar */}
                 <div className="hidden md:flex w-full md:w-[350px] bg-slate-900 p-10 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden shrink-0">
@@ -271,13 +271,13 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
                         {/* Plan Selection UI */}
                         <div className="p-6 lg:p-8 bg-slate-50/50 rounded-[32px] border border-slate-100 space-y-6">
                             <h4 className="text-sm font-semibold text-slate-600 ml-1">Monthly Subscription Plan</h4>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
                                 {plans.map(plan => (
                                     <button
                                         key={plan}
                                         type="button"
                                         onClick={() => setSelectedPlan(plan)}
-                                        className={`py-4 px-2 rounded-2xl font-semibold text-sm transition-all border-2 ${selectedPlan === plan
+                                        className={`py-3 md:py-4 px-1 md:px-2 rounded-xl md:rounded-2xl font-black text-xs md:text-sm transition-all border-2 ${selectedPlan === plan
                                             ? 'bg-slate-900 border-slate-900 text-white shadow-md'
                                             : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300'}`}
                                     >
@@ -299,14 +299,14 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
 
                             {/* Plan Duration Selection */}
                             <div className="pt-4 space-y-4">
-                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">How many years are you choosing this plan? *</h4>
-                                <div className="grid grid-cols-5 gap-3">
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">How many years? *</h4>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
                                     {durations.map(year => (
                                         <button
                                             key={year}
                                             type="button"
                                             onClick={() => setFormData(prev => ({ ...prev, planDuration: year }))}
-                                            className={`py-3 rounded-2xl font-semibold text-sm transition-all border-2 ${formData.planDuration === year
+                                            className={`py-3 rounded-xl md:rounded-2xl font-black text-xs md:text-sm transition-all border-2 ${formData.planDuration === year
                                                 ? 'bg-blue-600 border-blue-600 text-white shadow-md'
                                                 : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300'}`}
                                         >
