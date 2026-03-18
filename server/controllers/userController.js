@@ -24,6 +24,7 @@ exports.updateMemberFinancials = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const { id } = req.params;
+        console.log(`🛠️ Updating profile for ID: ${id} | Fields: ${Object.keys(req.body).join(', ')}`);
         const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
         res.json(updatedUser);
     } catch (error) {

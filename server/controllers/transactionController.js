@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Receipt = require('../models/Receipt');
 const { sendEmail } = require('../utils/emailService');
 const { generateReceiptPDF } = require('../utils/pdfGenerator');
+const { generateId } = require('../utils/idGenerator');
 
 exports.addTransaction = async (req, res) => {
     try {
@@ -45,7 +46,7 @@ exports.addTransaction = async (req, res) => {
 
             user.financials.loan = {
                 active: true,
-                loanId: `LOAN-${Math.floor(100000 + Math.random() * 899999)}`,
+                loanId: generateId('LOAN', 4),
                 amount: amount,
                 interestRate: parseFloat(interestRate || 2),
                 loanDate: new Date().toLocaleDateString('en-GB'),

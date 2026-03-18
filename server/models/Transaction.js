@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { generateId } = require('../utils/idGenerator');
 
 const TransactionSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -8,7 +9,7 @@ const TransactionSchema = new mongoose.Schema({
     amount: { type: Number, required: true },
     description: { type: String },
     date: { type: String, default: () => new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) },
-    transactionId: { type: String, unique: true, default: () => `TXN${Date.now()}${Math.floor(1000 + Math.random() * 9000)}` }
+    transactionId: { type: String, unique: true, default: () => generateId('TXN', 8) }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Transaction', TransactionSchema);

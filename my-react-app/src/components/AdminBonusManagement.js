@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { sendSMS } from '../utils/smsService'
 import { distributeBonus } from '../api'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function AdminBonusManagement({ members = [], onRefresh }) {
+    const { t } = useLanguage()
     const [bonusAmount, setBonusAmount] = useState('')
     const [bonusDescription, setBonusDescription] = useState('Annual Dividend / Bonus')
     const [isProcessing, setIsProcessing] = useState(false)
@@ -34,12 +36,11 @@ export default function AdminBonusManagement({ members = [], onRefresh }) {
             {/* Header */}
             <div className="bg-[#1e293b] p-8 lg:p-12 rounded-3xl lg:rounded-[48px] text-white relative overflow-hidden shadow-2xl">
                 <div className="relative z-10">
-                    <h3 className="text-2xl lg:text-4xl font-black tracking-tighter italic mb-4">Bonus Distribution</h3>
-                    <p className="text-slate-400 font-bold text-[10px] lg:text-sm uppercase tracking-[0.2em] max-w-lg leading-relaxed">
-                        Share the society profits. Distribute a fixed bonus amount to all registered members simultaneously.
+                    <h3 className="text-2xl lg:text-4xl font-bold tracking-tight mb-4">Bonus Distribution</h3>
+                    <p className="text-slate-400 font-bold text-[10px] lg:text-sm mt-1 uppercase tracking-widest max-w-lg leading-relaxed">
+                        Share profits with members. Distribute a fixed bonus amount to all members.
                     </p>
                 </div>
-                <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]"></div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
@@ -47,24 +48,24 @@ export default function AdminBonusManagement({ members = [], onRefresh }) {
                 <div className="lg:col-span-5 space-y-6 lg:space-y-8">
                     <div className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[40px] border border-slate-100 shadow-xl space-y-6 lg:space-y-8">
                         <div>
-                            <h4 className="text-lg lg:text-xl font-extrabold text-slate-900 tracking-tight mb-2">Configure Bonus</h4>
+                            <h4 className="text-lg lg:text-xl font-bold text-slate-900 tracking-tight mb-2">Configure Bonus</h4>
                             <p className="text-[10px] lg:text-xs font-bold text-slate-400 uppercase tracking-widest">Settings will apply to all {members.length} members</p>
                         </div>
 
                         <div className="space-y-5 lg:space-y-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] lg:text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Bonus Amount per Member (₹)</label>
+                                <label className="text-[10px] lg:text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Bonus Amount per Member (₹)</label>
                                 <input
                                     type="number"
                                     value={bonusAmount}
                                     onChange={(e) => setBonusAmount(e.target.value)}
                                     placeholder="Amount (e.g. 500)"
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl lg:rounded-[24px] px-6 lg:px-8 py-4 lg:py-5 text-lg lg:text-xl font-black text-slate-900 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl lg:rounded-[24px] px-6 lg:px-8 py-4 lg:py-5 text-lg lg:text-xl font-bold text-slate-900 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all"
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-[10px] lg:text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Bonus Label / Reason</label>
+                                <label className="text-[10px] lg:text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Bonus Label / Reason</label>
                                 <input
                                     type="text"
                                     value={bonusDescription}
@@ -78,7 +79,7 @@ export default function AdminBonusManagement({ members = [], onRefresh }) {
                                 <button
                                     onClick={() => setShowConfirm(true)}
                                     disabled={!bonusAmount || isProcessing}
-                                    className={`w-full py-5 lg:py-6 rounded-xl lg:rounded-[24px] font-black text-[10px] lg:text-sm uppercase tracking-widest shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 ${!bonusAmount
+                                    className={`w-full py-5 lg:py-6 rounded-xl lg:rounded-[24px] font-bold text-[10px] lg:text-sm uppercase tracking-widest shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 ${!bonusAmount
                                         ? 'bg-slate-100 text-slate-300'
                                         : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-500/20'
                                         }`}
@@ -93,12 +94,12 @@ export default function AdminBonusManagement({ members = [], onRefresh }) {
                     </div>
 
                     <div className="bg-emerald-50 p-6 lg:p-8 rounded-3xl lg:rounded-[40px] border border-emerald-100 flex items-center gap-4 lg:gap-6">
-                        <div className="w-10 h-10 lg:w-14 lg:h-14 bg-white rounded-xl lg:rounded-2xl flex-shrink-0 flex items-center justify-center text-emerald-500 shadow-sm border border-emerald-100 font-black text-lg lg:text-xl">
+                        <div className="w-10 h-10 lg:w-14 lg:h-14 bg-white rounded-xl lg:rounded-2xl flex-shrink-0 flex items-center justify-center text-emerald-500 shadow-sm border border-emerald-100 font-bold text-lg lg:text-xl">
                             !
                         </div>
                         <div>
-                            <p className="text-[9px] lg:text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Safety Lock Active</p>
-                            <p className="text-xs lg:text-sm font-medium text-emerald-800 leading-relaxed">This action cannot be undone. Bonuses are immediately reflected in ledgers.</p>
+                            <p className="text-[9px] lg:text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Security</p>
+                            <p className="text-xs lg:text-sm font-medium text-emerald-800 leading-relaxed">This action cannot be undone.</p>
                         </div>
                     </div>
                 </div>
@@ -107,10 +108,10 @@ export default function AdminBonusManagement({ members = [], onRefresh }) {
                 <div className="lg:col-span-7 bg-white rounded-3xl lg:rounded-[40px] border border-slate-100 shadow-xl overflow-hidden flex flex-col">
                     <div className="p-6 lg:p-10 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                         <div>
-                            <h4 className="text-lg lg:text-xl font-extrabold text-slate-900 tracking-tight">Receiving Members</h4>
-                            <p className="text-[10px] lg:text-xs font-bold text-slate-400 uppercase tracking-widest">Preview list of recipients</p>
+                            <h4 className="text-lg lg:text-xl font-bold text-slate-900 tracking-tight">Receiving Members</h4>
+                            <p className="text-[10px] lg:text-xs font-bold text-slate-400 uppercase tracking-widest">Recipient preview</p>
                         </div>
-                        <span className="px-4 lg:px-5 py-2 bg-white rounded-full border border-slate-200 text-[9px] lg:text-[10px] font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">{members.length} Members</span>
+                        <span className="px-4 lg:px-5 py-2 bg-white rounded-full border border-slate-200 text-[9px] lg:text-[10px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">{members.length} Members</span>
                     </div>
 
                     <div className="flex-1 overflow-y-auto max-h-[400px] lg:max-h-[600px] p-4 lg:p-6 space-y-2 lg:space-y-3 scrollbar-hide">
@@ -121,12 +122,12 @@ export default function AdminBonusManagement({ members = [], onRefresh }) {
                                         {m?.name?.charAt(0) || '?'}
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-xs lg:text-sm font-black text-slate-800 leading-none truncate">{m.name}</p>
+                                        <p className="text-xs lg:text-sm font-bold text-slate-800 leading-none truncate">{m.name}</p>
                                         <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-1 truncate">{m.email}</p>
                                     </div>
                                 </div>
                                 <div className="text-right ml-2">
-                                    <p className="text-[10px] lg:text-xs font-black text-emerald-600 uppercase tracking-widest whitespace-nowrap">+₹{parseFloat(bonusAmount || 0).toLocaleString()}</p>
+                                    <p className="text-[10px] lg:text-xs font-bold text-emerald-600 uppercase tracking-widest whitespace-nowrap">+₹{parseFloat(bonusAmount || 0).toLocaleString()}</p>
                                 </div>
                             </div>
                         ))}
@@ -145,20 +146,20 @@ export default function AdminBonusManagement({ members = [], onRefresh }) {
                         </div>
 
                         <div>
-                            <h3 className="text-xl lg:text-2xl font-black text-slate-900 tracking-tight mb-2">Confirm Distribution?</h3>
+                            <h3 className="text-xl lg:text-2xl font-bold text-slate-900 tracking-tight mb-2">Confirm Distribution?</h3>
                             <p className="text-xs lg:text-sm font-medium text-slate-500 leading-relaxed px-2">
                                 You are about to distribute <span className="text-slate-900 font-bold">₹{parseFloat(bonusAmount).toLocaleString()}</span> to each of the <span className="text-slate-900 font-bold">{members.length} members</span>.
                                 <br /><br />
-                                Total Impact: <span className="text-emerald-600 font-black text-lg lg:text-xl italic">₹{(parseFloat(bonusAmount) * members.length).toLocaleString()}</span>
+                                Total Impact: <span className="text-emerald-600 font-bold text-lg lg:text-xl">₹{(parseFloat(bonusAmount) * members.length).toLocaleString()}</span>
                             </p>
                         </div>
 
                         <div className="flex flex-col gap-2 lg:gap-3">
                             <button
                                 onClick={handleDistributeBonus}
-                                className="w-full bg-slate-900 text-white font-black py-4 lg:py-5 rounded-xl lg:rounded-[24px] text-xs lg:text-sm hover:bg-black transition-all shadow-xl active:scale-95"
+                                className="w-full bg-slate-900 text-white font-bold py-4 lg:py-5 rounded-xl lg:rounded-[24px] text-xs lg:text-sm hover:bg-black transition-all shadow-xl active:scale-95"
                             >
-                                YES, EXECUTE NOW
+                                YES, DISTRIBUTE
                             </button>
                             <button
                                 onClick={() => setShowConfirm(false)}

@@ -3,11 +3,14 @@ import Login from './components/Login'
 import Register from './components/Register'
 import Dashboard from './components/Dashboard'
 import LandingPage from './components/LandingPage'
+import { useLanguage } from './contexts/LanguageContext'
+import LanguageToggle from './components/LanguageToggle'
 
 export default function App() {
   const [view, setView] = useState('landing')
   const [user, setUser] = useState(null)
   const [initialMessage, setInitialMessage] = useState(null)
+  const { t } = useLanguage()
   const isDark = true // Permanent Dark Mode as requested
 
   useEffect(() => {
@@ -58,15 +61,16 @@ export default function App() {
 
           <div className={`hidden xl:flex items-center gap-10 font-black text-[10px] uppercase tracking-[0.2em] transition-colors ${isDark ? 'text-slate-400' : 'text-slate-500'
             }`}>
-            <button onClick={() => setView('about')} className={`transition-colors border-b-2 ${view === 'about' ? 'text-blue-500 border-blue-500' : 'hover:text-blue-500 border-transparent'}`}>About Us</button>
-            <button onClick={() => setView('services')} className={`transition-colors border-b-2 ${view === 'services' ? 'text-blue-500 border-blue-500' : 'hover:text-blue-500 border-transparent'}`}>Services</button>
-            <button onClick={() => setView('offers')} className={`transition-colors border-b-2 ${view === 'offers' ? 'text-blue-500 border-blue-500' : 'hover:text-blue-500 border-transparent'}`}>What We Offer</button>
-            <button onClick={() => setView('contact')} className={`transition-colors border-b-2 ${view === 'contact' ? 'text-blue-500 border-blue-500' : 'hover:text-blue-500 border-transparent'}`}>Contact Us</button>
+            <button onClick={() => setView('about')} className={`transition-colors border-b-2 ${view === 'about' ? 'text-blue-500 border-blue-500' : 'hover:text-blue-500 border-transparent'}`}>{t('nav.about')}</button>
+            <button onClick={() => setView('services')} className={`transition-colors border-b-2 ${view === 'services' ? 'text-blue-500 border-blue-500' : 'hover:text-blue-500 border-transparent'}`}>{t('nav.services')}</button>
+            <button onClick={() => setView('offers')} className={`transition-colors border-b-2 ${view === 'offers' ? 'text-blue-500 border-blue-500' : 'hover:text-blue-500 border-transparent'}`}>{t('nav.offers')}</button>
+            <button onClick={() => setView('contact')} className={`transition-colors border-b-2 ${view === 'contact' ? 'text-blue-500 border-blue-500' : 'hover:text-blue-500 border-transparent'}`}>{t('nav.contact')}</button>
           </div>
 
           <div className="flex items-center gap-2 lg:gap-4">
-            <button onClick={() => setView('register')} className="hidden sm:block px-6 py-2.5 rounded-xl text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10">Join Society</button>
-            <button onClick={() => setView('login')} className="px-6 py-2.5 rounded-xl bg-white text-black font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10">Login</button>
+            <LanguageToggle />
+            <button onClick={() => setView('register')} className="hidden sm:block px-6 py-2.5 rounded-xl text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10">{t('nav.join')}</button>
+            <button onClick={() => setView('login')} className="px-6 py-2.5 rounded-xl bg-white text-black font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10">{t('nav.login')}</button>
           </div>
         </nav>
       )}
@@ -117,6 +121,7 @@ export default function App() {
 
 // Detailed Components for Society Sections
 function AboutUs({ onBack, isDark }) {
+  const { t } = useLanguage()
   return (
     <PageContainer title="Our Mission" onBack={onBack} isDark={isDark}>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 text-left mt-16 relative">
@@ -174,6 +179,7 @@ function AboutUs({ onBack, isDark }) {
 }
 
 function Services({ onBack, isDark }) {
+  const { t } = useLanguage()
   return (
     <PageContainer title="Society Services" onBack={onBack} isDark={isDark}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
@@ -199,6 +205,7 @@ function Services({ onBack, isDark }) {
 }
 
 function Offers({ onBack, isDark }) {
+  const { t } = useLanguage()
   return (
     <PageContainer title="What We Offer" onBack={onBack} isDark={isDark}>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-20 text-left">
@@ -265,6 +272,7 @@ function Offers({ onBack, isDark }) {
 }
 
 function ContactUs({ onBack, isDark }) {
+  const { t } = useLanguage()
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState({ loading: false, success: null, error: null });
 
@@ -382,7 +390,8 @@ function ContactUs({ onBack, isDark }) {
   )
 }
 
-function PageContainer({ title, children, onBack }) {
+function PageContainer({ title, children, onBack, isDark }) {
+  const { t } = useLanguage()
   return (
     <div className="min-h-screen w-full flex flex-col items-center pt-32 lg:pt-48 pb-24 px-6 lg:px-24 text-center font-['Inter',_sans-serif] bg-[#0a0a0b] text-white overflow-hidden relative selection:bg-blue-600">
       {/* Background Orbs */}
@@ -396,7 +405,7 @@ function PageContainer({ title, children, onBack }) {
             className="group px-8 py-4 border border-white/10 bg-white/5 backdrop-blur-3xl rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] transition-all flex items-center gap-4 hover:bg-white hover:text-black hover:border-white active:scale-95"
           >
             <svg className="w-4 h-4 transform group-hover:-translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-            Back to Home
+            {t('nav.home')}
           </button>
           <div className="flex items-center gap-4 text-slate-600">
             <div className="w-12 h-[1px] bg-white/10"></div>
@@ -427,6 +436,7 @@ function PageContainer({ title, children, onBack }) {
 }
 
 function Guides({ onBack, isDark }) {
+  const { t } = useLanguage()
   return (
     <PageContainer title="System Guides" onBack={onBack} isDark={isDark}>
       <div className="max-w-4xl mx-auto text-left space-y-16 mt-16">
@@ -448,6 +458,7 @@ function Guides({ onBack, isDark }) {
 }
 
 function Privacy({ onBack, isDark }) {
+  const { t } = useLanguage()
   return (
     <PageContainer title="Privacy Policy" onBack={onBack} isDark={isDark}>
       <div className="max-w-4xl mx-auto text-left space-y-10 mt-16 text-slate-400 font-medium leading-loose">
@@ -466,6 +477,7 @@ function Privacy({ onBack, isDark }) {
 }
 
 function Terms({ onBack, isDark }) {
+  const { t } = useLanguage()
   return (
     <PageContainer title="Terms of Service" onBack={onBack} isDark={isDark}>
       <div className="max-w-4xl mx-auto text-left space-y-10 mt-16 text-slate-400 font-medium leading-loose">

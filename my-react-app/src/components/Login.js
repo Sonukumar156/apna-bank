@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { loginUser } from '../api'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function Login({ onLoginSuccess, onGoToRegister, onBackToHome, initialMessage }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const { t } = useLanguage()
   const [message, setMessage] = useState(initialMessage || { type: '', text: '' })
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -27,7 +29,7 @@ export default function Login({ onLoginSuccess, onGoToRegister, onBackToHome, in
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
 
         {/* Left Side: Modern Visual */}
-        <div className="w-full md:w-1/2 bg-slate-900 p-12 text-white flex flex-col justify-between relative overflow-hidden">
+        <div className="hidden md:flex w-full md:w-1/2 bg-slate-900 p-12 text-white flex flex-col justify-between relative overflow-hidden">
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-10">
               <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
@@ -35,7 +37,7 @@ export default function Login({ onLoginSuccess, onGoToRegister, onBackToHome, in
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
-              <h1 className="text-2xl font-black tracking-tight italic text-white uppercase">APNA SOCIETY</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-white uppercase">APNA SOCIETY</h1>
             </div>
 
             <button
@@ -46,8 +48,8 @@ export default function Login({ onLoginSuccess, onGoToRegister, onBackToHome, in
               Back to Home
             </button>
 
-            <h2 className="text-4xl font-black leading-tight mb-6 italic">
-              Official Committee <br />Management Portal
+            <h2 className="text-4xl font-bold leading-tight mb-6">
+              Committee <br />Portal
             </h2>
             <p className="text-slate-400 text-sm font-bold uppercase tracking-widest max-w-md leading-relaxed">
               A secure platform for managing member collections, loan distributions, and financial tracking.
@@ -66,10 +68,17 @@ export default function Login({ onLoginSuccess, onGoToRegister, onBackToHome, in
         </div>
 
         {/* Right Side: Form */}
-        <div className="flex-1 p-10 md:p-16 flex flex-col justify-center bg-white">
+        <div className="flex-1 p-8 md:p-16 flex flex-col justify-center bg-white min-h-[500px]">
+          {/* Mobile Home Button */}
+          <button
+            onClick={onBackToHome}
+            className="md:hidden mb-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400"
+          >
+            ← Back to Home
+          </button>
           <div className="mb-10 text-center md:text-left">
-            <h3 className="text-3xl font-black text-slate-900 mb-2 italic">Member Login</h3>
-            <p className="text-slate-400 font-bold text-xs uppercase tracking-widest leading-relaxed">Enter your credentials to access the portal.</p>
+            <h3 className="text-3xl font-bold text-slate-900 mb-2">{t('login.title')}</h3>
+            <p className="text-slate-400 font-bold text-xs uppercase tracking-widest leading-relaxed">{t('login.subtitle')}</p>
           </div>
 
           {message.text && (
@@ -81,7 +90,7 @@ export default function Login({ onLoginSuccess, onGoToRegister, onBackToHome, in
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Official Email</label>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('login.email')}</label>
               <input
                 type="email"
                 value={email}
@@ -93,8 +102,8 @@ export default function Login({ onLoginSuccess, onGoToRegister, onBackToHome, in
             </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center ml-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Access Password</label>
-                <a href="#" className="text-[10px] font-black text-blue-600 hover:text-blue-700 uppercase tracking-widest">Forgot?</a>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('login.password')}</label>
+                <a href="#" className="text-[10px] font-black text-blue-600 hover:text-blue-700 uppercase tracking-widest">{t('login.forgot')}</a>
               </div>
               <div className="relative">
                 <input
@@ -124,7 +133,7 @@ export default function Login({ onLoginSuccess, onGoToRegister, onBackToHome, in
               disabled={loading}
               className="w-full bg-slate-900 hover:bg-black text-white font-black py-5 rounded-2xl shadow-xl shadow-slate-200 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2 group mt-4 uppercase text-[10px] tracking-widest"
             >
-              {loading ? 'Authenticating...' : 'Sign In to Portal'}
+              {loading ? t('login.loggingIn') : t('login.button')}
               {!loading && (
                 <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -134,8 +143,8 @@ export default function Login({ onLoginSuccess, onGoToRegister, onBackToHome, in
           </form>
 
           <p className="text-center mt-12 text-slate-400 font-bold text-[10px] uppercase tracking-widest">
-            Not registered yet? {' '}
-            <button onClick={onGoToRegister} className="text-blue-600 font-black hover:underline underline-offset-4 decoration-blue-100">Apply for Membership</button>
+            {t('login.notRegistered')} {' '}
+            <button onClick={onGoToRegister} className="text-blue-600 font-bold hover:underline underline-offset-4 decoration-blue-100">{t('login.register')}</button>
           </p>
         </div>
       </div>

@@ -4,12 +4,12 @@ export default function Analytics() {
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 className="text-3xl font-black text-gray-900 tracking-tight">Analytics Overview</h2>
-                    <p className="text-gray-500 font-medium">Track your performance and usage statistics.</p>
+                    <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Analytics</h2>
+                    <p className="text-gray-500 font-medium">Track your usage statistics.</p>
                 </div>
                 <div className="flex gap-3">
-                    <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all">Download CSV</button>
-                    <button className="px-4 py-2 bg-indigo-600 rounded-xl text-sm font-bold text-white shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">Update Live</button>
+                    <button className="px-4 py-2 bg-white border border-gray-200 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">Download CSV</button>
+                    <button className="px-4 py-2 bg-indigo-600 rounded-md text-sm font-medium text-white shadow-sm hover:bg-indigo-700 transition-all">Refresh Data</button>
                 </div>
             </div>
 

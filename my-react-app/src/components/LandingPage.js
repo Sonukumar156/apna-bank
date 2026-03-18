@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const FeatureCard = ({ title, desc, icon, isDark }) => (
     <div className={`group p-8 border rounded-[40px] transition-all duration-500 backdrop-blur-xl ${isDark ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20' : 'bg-white border-slate-200 shadow-sm hover:shadow-xl'
@@ -13,6 +14,7 @@ const FeatureCard = ({ title, desc, icon, isDark }) => (
 );
 
 export default function LandingPage({ onLogin, onRegister, onNavigate, isDark }) {
+    const { t } = useLanguage();
     return (
         <div className={`min-h-screen w-full flex flex-col font-['Inter',_sans-serif] overflow-x-hidden selection:bg-blue-600 selection:text-white transition-colors duration-500 ${isDark ? 'bg-[#0a0a0b] text-white' : 'bg-[#f8fafc] text-slate-900'
             }`}>
@@ -27,25 +29,26 @@ export default function LandingPage({ onLogin, onRegister, onNavigate, isDark })
                 </div>
 
                 <div className="relative z-10 max-w-7xl w-full px-6 lg:px-24 flex flex-col items-center text-center">
-                    <div className={`inline-flex items-center gap-2 px-6 py-2 border rounded-full mb-10 animate-in fade-in slide-in-from-top-12 duration-1000 ${isDark ? 'bg-white/5 border-white/10 text-blue-500' : 'bg-blue-50 border-blue-100 text-blue-600'
+                    <div className={`inline-flex items-center gap-2 px-6 py-2 border rounded-full mb-8 lg:mb-10 animate-in fade-in slide-in-from-top-12 duration-1000 ${isDark ? 'bg-white/5 border-white/10 text-blue-500' : 'bg-blue-50 border-blue-100 text-blue-600'
                         }`}>
-                        <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em]">Next Gen Society Intelligence</span>
+                        <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest">Society Management</span>
                     </div>
-
-                    <h1 className="text-6xl lg:text-[140px] font-black leading-[0.85] tracking-tighter mb-10 animate-in fade-in slide-in-from-bottom-20 duration-1000 delay-200 text-white">
-                        Smarter Societies.<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-400 to-emerald-400">Digital Finance.</span>
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[120px] xl:text-[140px] font-bold leading-[1.1] lg:leading-[0.85] tracking-tight mb-8 lg:mb-10 animate-in fade-in slide-in-from-bottom-20 duration-1000 delay-200 text-white">
+                        {t('landing.heroTitle')}<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-400 to-emerald-400">{t('landing.heroSubtitle')}</span>
                     </h1>
 
-                    <p className={`text-xl lg:text-3xl font-medium max-w-4xl mb-16 animate-in fade-in slide-in-from-bottom-20 duration-1000 delay-500 ${isDark ? 'text-slate-400' : 'text-slate-500'
+                    <p className={`text-lg sm:text-xl lg:text-3xl font-medium max-w-4xl mb-12 lg:mb-16 animate-in fade-in slide-in-from-bottom-20 duration-1000 delay-500 ${isDark ? 'text-slate-400' : 'text-slate-500'
                         }`}>
-                        The definitive OS for managing committee funds, distributions, and member transparency. Built for modern communities that demand <span className="text-white italic underline decoration-blue-500 decoration-2">absolute precision.</span>
+                        {t('landing.heroDesc')}
                     </p>
-
-                    <div className="flex flex-wrap items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-500">
-                        <button onClick={onLogin} className="px-12 py-6 bg-blue-600 text-white rounded-3xl font-black text-sm uppercase tracking-[0.2em] shadow-[0_20px_50px_rgba(37,99,235,0.3)] hover:scale-105 active:scale-95 transition-all group">Get Started <svg className="inline w-5 h-5 ml-3 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg></button>
-                        <button onClick={() => document.getElementById('vision').scrollIntoView({ behavior: 'smooth' })} className={`px-12 py-6 border rounded-3xl font-black text-sm uppercase tracking-[0.2em] transition-all ${isDark ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' : 'bg-white border-slate-200 text-slate-900 hover:bg-slate-50 shadow-sm'
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-500 w-full sm:w-auto">
+                        <button onClick={onLogin} className="w-full sm:w-auto px-10 lg:px-12 py-5 lg:py-6 bg-blue-600 text-white rounded-2xl lg:rounded-3xl font-bold text-sm uppercase tracking-widest shadow-[0_20px_50px_rgba(37,99,235,0.3)] hover:scale-105 active:scale-95 transition-all group">
+                            {t('landing.startJourney')}
+                            <svg className="inline w-5 h-5 ml-3 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                        </button>
+                        <button onClick={() => document.getElementById('vision').scrollIntoView({ behavior: 'smooth' })} className={`w-full sm:w-auto px-10 lg:px-12 py-5 lg:py-6 border rounded-2xl lg:rounded-3xl font-bold text-sm uppercase tracking-widest transition-all ${isDark ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' : 'bg-white border-slate-200 text-slate-900 hover:bg-slate-50 shadow-sm'
                             }`}>Vision</button>
                     </div>
 
@@ -59,13 +62,13 @@ export default function LandingPage({ onLogin, onRegister, onNavigate, isDark })
                                 }`}></div>
 
                             {/* Floating Analytics Card */}
-                            <div className={`absolute bottom-6 left-6 lg:bottom-10 lg:left-20 backdrop-blur-3xl p-6 lg:p-8 rounded-[40px] border text-left space-y-2 animate-bounce duration-[4000ms] transition-all ${isDark ? 'bg-white/10 border-white/10' : 'bg-white/90 border-slate-200 shadow-2xl'
+                            <div className={`absolute bottom-6 left-6 lg:bottom-10 lg:left-20 backdrop-blur-3xl p-6 lg:p-8 rounded-[40px] border text-left space-y-2 transition-all ${isDark ? 'bg-white/10 border-white/10' : 'bg-white/90 border-slate-200 shadow-2xl'
                                 }`}>
-                                <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Total Society Fund</p>
-                                <p className={`text-3xl lg:text-4xl font-black italic tracking-tighter ${isDark ? 'text-white' : 'text-slate-900'}`}>₹24,50,000</p>
+                                <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">Total Fund</p>
+                                <p className={`text-3xl lg:text-4xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>₹24,50,000</p>
                                 <div className="flex items-center gap-2 pt-2">
                                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                    <span className="text-[10px] font-black text-emerald-500">↑ 12.5% Growth</span>
+                                    <span className="text-[10px] font-bold text-emerald-500">↑ 12.5% Growth</span>
                                 </div>
                             </div>
                         </div>
@@ -96,12 +99,11 @@ export default function LandingPage({ onLogin, onRegister, onNavigate, isDark })
 
                 <div className="max-w-7xl mx-auto relative z-10">
                     <div className="text-center mb-24">
-                        <h2 className="text-4xl lg:text-7xl font-black italic tracking-tighter text-white mb-6 uppercase">
-                            Global <span className="text-blue-500">Society Pulse.</span>
+                        <h2 className="text-4xl lg:text-7xl font-bold tracking-tight text-white mb-6 uppercase">
+                            Finance <span className="text-blue-500">Overview.</span>
                         </h2>
-                        <p className="text-slate-500 font-bold text-[10px] uppercase tracking-[0.6em]">Real-time Financial Intelligence</p>
+                        <p className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">Reports</p>
                     </div>
-
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
                         {/* Custom Animated Graph Container */}
                         <div className="lg:col-span-8 p-12 lg:p-16 rounded-[60px] border border-white/10 bg-white/5 backdrop-blur-3xl relative group">
@@ -111,8 +113,8 @@ export default function LandingPage({ onLogin, onRegister, onNavigate, isDark })
                                 {/* Bar 1: Total Members */}
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-end">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Members</p>
-                                        <p className="text-2xl font-black text-white italic">150 +</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Members</p>
+                                        <p className="text-2xl font-bold text-white">150 +</p>
                                     </div>
                                     <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                                         <div className="h-full bg-blue-600 rounded-full animate-[slideRight_1.5s_ease-out_forwards]" style={{ width: '45%' }}></div>
@@ -122,8 +124,8 @@ export default function LandingPage({ onLogin, onRegister, onNavigate, isDark })
                                 {/* Bar 2: Total Fund */}
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-end">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Society Fund</p>
-                                        <p className="text-2xl font-black text-emerald-500 italic">₹42.50 L</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Fund</p>
+                                        <p className="text-2xl font-bold text-emerald-500">₹42.50 L</p>
                                     </div>
                                     <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                                         <div className="h-full bg-emerald-500 rounded-full animate-[slideRight_2s_ease-out_forwards]" style={{ width: '85%' }}></div>
@@ -133,8 +135,8 @@ export default function LandingPage({ onLogin, onRegister, onNavigate, isDark })
                                 {/* Bar 3: Loan Issued */}
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-end">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Outward Loans Issued</p>
-                                        <p className="text-2xl font-black text-white italic">₹18.00 L</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Loans Issued</p>
+                                        <p className="text-2xl font-bold text-white">₹18.00 L</p>
                                     </div>
                                     <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                                         <div className="h-full bg-slate-400 rounded-full animate-[slideRight_2.5s_ease-out_forwards]" style={{ width: '60%' }}></div>
@@ -144,8 +146,8 @@ export default function LandingPage({ onLogin, onRegister, onNavigate, isDark })
                                 {/* Bar 4: Loan Receivable */}
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-end">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Receivable Assets</p>
-                                        <p className="text-2xl font-black text-blue-500 italic">₹5.20 L</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Receivables</p>
+                                        <p className="text-2xl font-bold text-blue-500">₹5.20 L</p>
                                     </div>
                                     <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                                         <div className="h-full bg-blue-500 rounded-full animate-[slideRight_3s_ease-out_forwards]" style={{ width: '35%' }}></div>
@@ -165,17 +167,17 @@ export default function LandingPage({ onLogin, onRegister, onNavigate, isDark })
                         {/* Analysis Content */}
                         <div className="lg:col-span-4 text-left space-y-10">
                             <div className="space-y-4">
-                                <h3 className="text-3xl font-black italic text-white tracking-tighter">Precision <br /> Reporting.</h3>
+                                <h3 className="text-3xl font-bold text-white tracking-tight">Precision <br /> Reporting.</h3>
                                 <p className="text-slate-400 font-medium leading-relaxed">
                                     Our algorithmic tracking ensures that every variable is mirrored across our decentralized mirrors. No gaps, no lag.
                                 </p>
                             </div>
 
                             <div className="p-8 border border-white/10 bg-white/5 rounded-[40px] space-y-4">
-                                <span className="w-10 h-10 rounded-2xl bg-blue-600/20 flex items-center justify-center text-blue-500 text-xl font-black italic">!</span>
-                                <h4 className="text-base font-black text-white tracking-tight italic">Transparency Lock</h4>
+                                <span className="w-10 h-10 rounded-2xl bg-blue-600/20 flex items-center justify-center text-blue-500 text-xl font-bold">!</span>
+                                <h4 className="text-base font-bold text-white tracking-tight">Data Security</h4>
                                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-loose">
-                                    Live stats are updated every 60 seconds with 99.9% data integrity.
+                                    Live stats are updated regularly.
                                 </p>
                             </div>
                         </div>

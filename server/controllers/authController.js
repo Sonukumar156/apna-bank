@@ -1,14 +1,15 @@
 const User = require('../models/User');
 const { sendEmail } = require('../utils/emailService');
+const { generateId } = require('../utils/idGenerator');
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
     try {
-        const user = await User.findOne({ email });
+        // Case-insensitive search
+        const user = await User.findOne({ email: { $regex: new RegExp(`^${email.trim()}$`, 'i') } });
         if (!user || user.password !== password) {
             return res.status(401).json({ message: 'Incorrect email or password.' });
         }
-        // In a real app, generate a JWT token here
         res.json(user);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -17,7 +18,8 @@ exports.login = async (req, res) => {
 
 exports.register = async (req, res) => {
     try {
-        const { email, mobile } = req.body;
+        const { email, mobile, panCard, aadharCard } = req.body;
+        console.log(`📝 Registering user: ${email} | PAN attached: ${!!panCard} | Aadhar attached: ${!!aadharCard}`);
 
         // Mobile Validation
         if (!/^[789]\d{9}$/.test(mobile)) {
@@ -34,14 +36,25 @@ exports.register = async (req, res) => {
             return res.status(400).json({ message: 'Mobile number already registered' });
         }
 
+        let regNo;
+        let regNoExists = true;
+        while (regNoExists) {
+            regNo = generateId('REG', 4);
+            const existingRegNo = await User.findOne({ regNo });
+            if (!existingRegNo) regNoExists = false;
+        }
+
         const userData = {
             ...req.body,
-            role: 'user',
-            regNo: `AS-${Math.floor(10000 + Math.random() * 90000)}`,
+            email: email.trim().toLowerCase(),
+            mobile: mobile.trim(),
+            role: req.body.role || 'user',
+            regNo,
             financials: {
                 collection: { status: 'due', amount: 0, date: null },
                 loan: { active: false, amount: 0, interest: 0, remaining: 0 }
-            }
+            },
+            isFirstLogin: req.body.isFirstLogin || false
         };
 
         const newUser = new User(userData);
@@ -63,6 +76,9 @@ exports.register = async (req, res) => {
                             <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
                                 <p style="margin: 5px 0;"><strong>Registration ID:</strong> ${newUser.regNo}</p>
                                 <p style="margin: 5px 0;"><strong>Initial Plan:</strong> ₹${newUser.planAmount || 1000}</p>
+                                <p style="margin: 5px 0; border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 10px;"><strong>Login Credentials:</strong></p>
+                                <p style="margin: 5px 0;">Email: ${newUser.email}</p>
+                                <p style="margin: 5px 0;">Password: ${newUser.password}</p>
                             </div>
                             <p>You can now login to your dashboard to manage your society funds and loans.</p>
                             <p style="margin-top: 30px;">Best Regards,<br>Management Team</p>
@@ -77,6 +93,22 @@ exports.register = async (req, res) => {
             message: 'Registration successful! You can now login.',
             user: newUser
         });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.changePassword = async (req, res) => {
+    const { userId, oldPassword, newPassword } = req.body;
+    try {
+        const user = await User.findById(userId);
+        if (!user || user.password !== oldPassword) {
+            return res.status(400).json({ message: 'Incorrect old password.' });
+        }
+        user.password = newPassword;
+        user.isFirstLogin = false;
+        await user.save();
+        res.json({ message: 'Password changed successfully!', user });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -3,8 +3,8 @@ export default function Reports() {
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
-                <h2 className="text-3xl font-black text-gray-900 tracking-tight">Financial Reports</h2>
-                <p className="text-gray-500 font-medium">Access and manage your generated documents.</p>
+                <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Reports</h2>
+                <p className="text-gray-500 font-medium">View generated documents.</p>
             </div>
 
             <div className="bg-white border border-gray-100 rounded-[40px] overflow-hidden shadow-sm">
@@ -33,7 +33,7 @@ export default function Reports() {
                             </div>
                             <div className="flex items-center gap-6">
                                 <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${report.status === 'Finalized' ? 'bg-emerald-50 text-emerald-600' :
-                                        report.status === 'Pending' ? 'bg-amber-50 text-amber-600' : 'bg-gray-100 text-gray-500'
+                                    report.status === 'Pending' ? 'bg-amber-50 text-amber-600' : 'bg-gray-100 text-gray-500'
                                     }`}>
                                     {report.status}
                                 </span>

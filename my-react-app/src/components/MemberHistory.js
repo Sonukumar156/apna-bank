@@ -1,4 +1,7 @@
+import { useLanguage } from '../contexts/LanguageContext'
+
 export default function MemberHistory({ user, onViewReceipt }) {
+    const { t } = useLanguage()
     const history = user.history || [];
 
     return (
@@ -6,14 +9,8 @@ export default function MemberHistory({ user, onViewReceipt }) {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm">
                 <div>
-                    <h3 className="text-3xl font-black text-slate-900 tracking-tighter italic">Transaction History</h3>
-                    <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-[0.2em]">Detailed record of all your payments</p>
-                </div>
-                <div className="flex gap-4">
-                    <div className="px-6 py-3 bg-emerald-50 rounded-2xl border border-emerald-100 text-center">
-                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-0.5">Success Rate</p>
-                        <p className="text-sm font-black text-emerald-700">100% Secure</p>
-                    </div>
+                    <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{t('history.title')}</h3>
+                    <p className="text-xs font-bold text-slate-400 mt-2 lowercase">{t('history.subtitle')}</p>
                 </div>
             </div>
 
@@ -23,7 +20,7 @@ export default function MemberHistory({ user, onViewReceipt }) {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50/50">
-                                {['Date', 'Type', 'Description', 'Amount', 'Status'].map((h) => (
+                                {[t('history.date'), t('history.type'), t('history.description'), t('history.amount'), t('history.status')].map((h) => (
                                     <th key={h} className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">{h}</th>
                                 ))}
                             </tr>
@@ -63,7 +60,7 @@ export default function MemberHistory({ user, onViewReceipt }) {
                                                         onClick={() => onViewReceipt(item)}
                                                         className="px-3 py-1 bg-slate-100 text-slate-500 hover:bg-slate-900 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
                                                     >
-                                                        Receipt
+                                                        {t('history.receipt')}
                                                     </button>
                                                     {item.transactionId && (
                                                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">ID: {item.transactionId}</span>
@@ -82,8 +79,8 @@ export default function MemberHistory({ user, onViewReceipt }) {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
                                             </div>
-                                            <h4 className="text-xl font-black text-slate-900 tracking-tight italic">No Transactions Yet</h4>
-                                            <p className="text-sm font-bold text-slate-400 mt-2 uppercase tracking-widest leading-relaxed">Your payment history will appear here once you make your first payment.</p>
+                                            <h4 className="text-xl font-black text-slate-900 tracking-tight italic">{t('history.noTransactions')}</h4>
+                                            <p className="text-sm font-bold text-slate-400 mt-2 uppercase tracking-widest leading-relaxed">{t('history.subtitle')}</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -97,13 +94,13 @@ export default function MemberHistory({ user, onViewReceipt }) {
             <div className="p-12 bg-[#0f172a] rounded-[48px] text-white relative overflow-hidden ring-1 ring-white/10 shadow-2xl">
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
                     <div>
-                        <h4 className="text-2xl font-black tracking-tighter italic mb-2">Verified Ledger</h4>
-                        <p className="text-slate-400 font-medium max-w-sm text-sm">All transactions are processed through our secure internal verification protocol.</p>
+                        <h4 className="text-2xl font-bold tracking-tight mb-2">Verified Records</h4>
+                        <p className="text-slate-400 font-medium max-w-sm text-sm">All transactions are verified through our secure system.</p>
                     </div>
                     <div className="flex gap-4">
                         <div className="px-8 py-4 bg-white/5 rounded-2xl border border-white/5 text-center">
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Status</p>
-                            <p className="text-xs font-black text-emerald-400 italic">Audit Clear</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>Management Portal</p>
+                            <p className="text-xs font-bold text-emerald-400">Audit Clear</p>
                         </div>
                     </div>
                 </div>

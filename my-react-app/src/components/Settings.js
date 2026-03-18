@@ -3,8 +3,8 @@ export default function Settings({ user }) {
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
-                <h2 className="text-3xl font-black text-gray-900 tracking-tight">System Settings</h2>
-                <p className="text-gray-500 font-medium">Manage your account preferences and profile.</p>
+                <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Settings</h2>
+                <p className="text-gray-500 font-medium">Manage your preferences.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -21,11 +21,11 @@ export default function Settings({ user }) {
                                 <input disabled value={user.email} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3.5 text-gray-500 font-bold" />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Mobile Number</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Mobile Number</label>
                                 <input defaultValue={user.mobile} className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 font-bold focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all" />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Address</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Address</label>
                                 <input defaultValue={user.address} className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-gray-900 font-bold focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all" />
                             </div>
                         </div>
@@ -49,8 +49,8 @@ export default function Settings({ user }) {
                 <div className="space-y-6">
                     <div className="bg-indigo-600 rounded-[40px] p-8 text-white relative overflow-hidden group">
                         <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                        <h4 className="text-lg font-black mb-2 italic">APNA SOCIETY Pro</h4>
-                        <p className="text-white/70 text-sm font-medium mb-6">Upgrade to unlock advanced features and unlimited reports.</p>
+                        <h4 className="text-lg font-bold mb-2">APNA SOCIETY</h4>
+                        <p className="text-white/70 text-sm font-medium mb-6">Upgrade to unlock advanced features.</p>
                         <button className="w-full bg-white text-indigo-600 font-black py-3 rounded-2xl text-sm shadow-xl">Upgrade Now</button>
                     </div>
 

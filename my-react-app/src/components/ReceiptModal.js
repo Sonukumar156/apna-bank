@@ -2,8 +2,10 @@ import { useRef, useState } from 'react'
 import { saveReceipt } from '../api'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function ReceiptModal({ transaction, user, onClose, currentRole }) {
+    const { t } = useLanguage()
     const receiptRef = useRef()
     const [saving, setSaving] = useState(false)
 
@@ -58,33 +60,33 @@ export default function ReceiptModal({ transaction, user, onClose, currentRole }
             {/* CSS for A4 Print Formatting */}
             <style dangerouslySetInnerHTML={{
                 __html: `
-                @media print {
-                    @page {
-                        size: A4;
-                        margin: 0;
-                    }
-                    body * {
-                        visibility: hidden;
-                    }
-                    .print-container, .print-container * {
-                        visibility: visible;
-                    }
-                    .print-container {
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                        width: 210mm;
-                        height: 297mm;
-                        margin: 0 auto !important;
-                        padding: 20mm !important;
-                        background: white !important;
-                        box-shadow: none !important;
-                    }
-                    .no-print {
-                        display: none !important;
-                    }
-                }
-            `}} />
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+    body * {
+        visibility: hidden;
+    }
+    .print-container, .print-container * {
+        visibility: visible;
+    }
+    .print-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;
+        height: 297mm;
+        margin: 0 auto!important;
+        padding: 20mm!important;
+        background: white!important;
+        box-shadow: none!important;
+    }
+    .no-print {
+        display: none!important;
+    }
+}
+`}} />
 
             <div className="bg-white w-full max-w-lg rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-auto max-h-[90vh] print:max-h-none print:shadow-none print:w-full print:max-w-none print:rounded-none print-container">
 
@@ -92,29 +94,28 @@ export default function ReceiptModal({ transaction, user, onClose, currentRole }
                 <div className="flex-1 overflow-y-auto bg-white custom-scrollbar print:overflow-visible">
                     <div ref={receiptRef} id="receipt-content" className="p-8 sm:p-12 bg-white" style={{ color: '#0f172a' }}>
                         <div className="text-center space-y-4 mb-10 border-b border-slate-100 pb-10" style={{ borderColor: '#f1f5f9' }}>
-                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-black mx-auto shadow-xl mb-4 tracking-tighter" style={{ backgroundColor: '#2563eb', boxShadow: '0 20px 25px -5px rgba(37, 99, 235, 0.2)' }}>AW</div>
+                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mx-auto shadow-xl mb-4 tracking-tight" style={{ backgroundColor: '#2563eb', boxShadow: '0 20px 25px -5px rgba(37, 99, 235, 0.2)' }}>A</div>
                             <div>
-                                <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-1" style={{ color: '#0f172a' }}>AW SOCIETY</h1>
-                                <h2 className="text-sm font-bold tracking-widest uppercase italic border-y py-1.5 my-3" style={{ color: '#2563eb', borderColor: '#dbeafe' }}>Official Payment Receipt</h2>
+                                <h1 className="text-2xl font-bold text-slate-900 tracking-tight uppercase mb-1" style={{ color: '#0f172a' }}>APNA SOCIETY</h1>
+                                <h2 className="text-sm font-bold tracking-widest uppercase border-y py-1.5 my-3" style={{ color: '#2563eb', borderColor: '#dbeafe' }}>{t('receipt.title')}</h2>
                             </div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]" style={{ color: '#94a3b8' }}>Society Management Portal</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>{t('receipt.management')}</p>
                         </div>
-
                         <div className="space-y-8">
                             <div className="flex justify-between items-start">
                                 <div className="space-y-1 text-left">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>Transaction ID</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>{t('receipt.id')}</p>
                                     <p className="text-sm font-black text-slate-900" style={{ color: '#0f172a' }}>{transaction.transactionId}</p>
                                 </div>
                                 <div className="text-right space-y-1">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>Date</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>{t('receipt.date')}</p>
                                     <p className="text-sm font-black text-slate-900" style={{ color: '#0f172a' }}>{transaction.date}</p>
                                 </div>
                             </div>
 
                             <div className="p-6 rounded-3xl border space-y-4" style={{ backgroundColor: '#f8fafc', borderColor: '#f1f5f9' }}>
                                 <div className="flex justify-between items-center text-left">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>Billed To</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>{t('receipt.billedTo')}</p>
                                     <p className="text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-lg" style={{ color: '#2563eb', backgroundColor: '#eff6ff' }}>{user.regNo}</p>
                                 </div>
                                 <div className="text-left">
@@ -126,30 +127,31 @@ export default function ReceiptModal({ transaction, user, onClose, currentRole }
 
                             <div className="border-t border-b py-6 space-y-4" style={{ borderColor: '#f1f5f9' }}>
                                 <div className="flex justify-between items-center text-left">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>Description</p>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>Amount</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>{t('receipt.description')}</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest" style={{ color: '#94a3b8' }}>{t('receipt.amount')}</p>
                                 </div>
                                 <div className="flex justify-between items-start text-left">
                                     <div className="space-y-1">
                                         <p className="text-sm font-black text-slate-800" style={{ color: '#1e293b' }}>{transaction.type}</p>
-                                        <p className="text-xs font-medium text-slate-500 max-w-[240px] leading-relaxed" style={{ color: '#64748b' }}>{transaction.description}</p>
+                                        <p className="text-sm font-semibold text-slate-800" style={{ color: '#1e293b' }}>{transaction.type}</p>
+                                        <p className="text-xs font-normal text-slate-500 max-w-[240px] leading-relaxed" style={{ color: '#64748b' }}>{transaction.description}</p>
                                     </div>
-                                    <p className="text-lg font-black italic font-mono" style={{ color: '#0f172a' }}>₹{transaction.amount.toLocaleString()}</p>
+                                    <p className="text-lg font-semibold" style={{ color: '#0f172a' }}>₹{transaction.amount.toLocaleString()}</p>
                                 </div>
                             </div>
 
                             <div className="flex justify-between items-center pt-2">
-                                <p className="text-sm font-black uppercase tracking-tighter" style={{ color: '#0f172a' }}>Total Paid</p>
-                                <p className="text-3xl font-black italic" style={{ color: '#2563eb' }}>₹{transaction.amount.toLocaleString()}</p>
+                                <p className="text-sm font-bold uppercase tracking-tight" style={{ color: '#0f172a' }}>{t('receipt.totalPaid')}</p>
+                                <p className="text-3xl font-bold" style={{ color: '#2563eb' }}>₹{transaction.amount.toLocaleString()}</p>
                             </div>
 
                             <div className="pt-10 flex flex-col items-center gap-4">
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-full border" style={{ backgroundColor: '#ecfdf5', borderColor: '#d1fae5' }}>
                                     <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#10b981' }}></div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: '#059669' }}>Digitally Verified</span>
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#059669' }}>{t('receipt.verified')}</span>
                                 </div>
-                                <p className="text-[9px] font-bold uppercase text-center leading-relaxed max-w-[280px]" style={{ color: '#94a3b8' }}>
-                                    This is a computer generated receipt from AW SOCIETY.
+                                <p className="text-[9px] font-medium uppercase text-center leading-relaxed max-w-[280px]" style={{ color: '#94a3b8' }}>
+                                    {t('receipt.footerDesc')}
                                 </p>
                             </div>
                         </div>
@@ -162,7 +164,7 @@ export default function ReceiptModal({ transaction, user, onClose, currentRole }
                         onClick={onClose}
                         className="flex-1 py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all font-bold"
                     >
-                        Close
+                        {t('common.cancel')}
                     </button>
                     <button
                         onClick={handlePrint}
@@ -172,12 +174,12 @@ export default function ReceiptModal({ transaction, user, onClose, currentRole }
                         {saving ? (
                             <>
                                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                Saving to DB...
+                                {t('common.loading')}
                             </>
                         ) : (
                             <>
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                                Download as PDF (A4)
+                                {t('receipt.downloadPDF')}
                             </>
                         )}
                     </button>

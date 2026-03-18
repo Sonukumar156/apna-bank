@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react'
 import { registerUser } from '../api'
 import { sendSMS } from '../utils/smsService'
+import { useLanguage } from '../contexts/LanguageContext'
 
-export default function Register({ onBackToLogin, onBackToHome, onRegisterSuccess }) {
+export default function Register({ onBackToLogin, onBackToHome, onRegisterSuccess, isAdminMode = false }) {
     const [formData, setFormData] = useState({
         name: '', email: '', mobile: '', address: '', pincode: '', password: '', confirmPassword: '', planDuration: '1',
-        panCard: null, aadharCard: null
+        panCard: null, aadharCard: null, role: 'user'
     })
     const [selectedPlan, setSelectedPlan] = useState('1000')
     const [customAmount, setCustomAmount] = useState('')
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const { t } = useLanguage()
     const [notification, setNotification] = useState({ show: false, message: '', type: 'error' })
     const [progress, setProgress] = useState(100)
 
@@ -52,11 +54,31 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
         }
     }, [notification.show])
 
+    // Auto-generate password for Admin Mode
+    useEffect(() => {
+        if (isAdminMode && formData.name && formData.mobile.length >= 3) {
+            const firstName = formData.name.trim().split(' ')[0].toLowerCase()
+            const mobilePrefix = formData.mobile.substring(0, 3)
+            const autoPassword = `${firstName}${mobilePrefix}`
+            setFormData(prev => ({
+                ...prev,
+                password: autoPassword,
+                confirmPassword: autoPassword
+            }))
+        } else if (isAdminMode && (!formData.name || formData.mobile.length < 3)) {
+            setFormData(prev => ({
+                ...prev,
+                password: '',
+                confirmPassword: ''
+            }))
+        }
+    }, [formData.name, formData.mobile, isAdminMode])
+
     const handleFileUpload = (e, type) => {
         const file = e.target.files[0]
         if (!file) return
-        if (file.size > 2 * 1024 * 1024) { // 2MB limit
-            showToast('File size must be less than 2MB')
+        if (file.size > 5 * 1024 * 1024) { // Increased to 5MB for PDFs
+            showToast('File size must be less than 5MB')
             return
         }
         const reader = new FileReader()
@@ -121,7 +143,7 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
             showToast('Passwords do not match')
             return
         }
-        if (!formData.panCard || !formData.aadharCard) {
+        if (!isAdminMode && (!formData.panCard || !formData.aadharCard)) {
             showToast('PAN and Aadhar cards are mandatory')
             return
         }
@@ -131,7 +153,9 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
             const res = await registerUser({
                 ...formData,
                 planAmount: parseFloat(finalPlanAmount),
-                planDuration: formData.planDuration
+                planDuration: formData.planDuration,
+                isFirstLogin: isAdminMode,
+                role: 'user' 
             })
 
             showToast(res.message, 'success')
@@ -190,24 +214,25 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
             <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[800px]">
 
                 {/* Visual Sidebar */}
-                <div className="w-full md:w-[350px] bg-slate-900 p-10 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden">
+                <div className="hidden md:flex w-full md:w-[350px] bg-slate-900 p-10 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden shrink-0">
                     <div className="relative z-10">
                         <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mb-10 shadow-lg shadow-blue-500/20">
                             <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                             </svg>
                         </div>
-                        <h2 className="text-3xl lg:text-4xl font-black leading-tight mb-4 italic">Join the <br />Community</h2>
-
-                        <button
-                            onClick={onBackToHome}
-                            className="mt-4 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-300 hover:bg-white/10 hover:text-white transition-all flex items-center gap-2 group w-fit"
-                        >
-                            <svg className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                            Back to Home
-                        </button>
-                        <p className="text-slate-400 font-bold text-xs uppercase tracking-widest leading-relaxed">
-                            Complete your registration to access society funds and financial reports.
+                        <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-4">{isAdminMode ? 'Add Member' : 'Create Account'}</h2>
+                        {!isAdminMode && (
+                            <button
+                                onClick={onBackToHome}
+                                className="mt-4 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition-all flex items-center gap-2 group w-fit"
+                            >
+                                <svg className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                                Back to Home
+                            </button>
+                        )}
+                        <p className="text-slate-400 text-sm mt-4">
+                            {isAdminMode ? 'Add a new member to the society fund.' : 'Registration for society fund access.'}
                         </p>
                     </div>
 
@@ -227,24 +252,33 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
                 </div>
 
                 {/* Form Area */}
-                <div className="flex-1 p-8 lg:p-16 bg-white overflow-y-auto">
+                <div className="flex-1 p-6 md:p-16 bg-white overflow-y-auto">
+                    {/* Mobile Back Button */}
+                    {!isAdminMode && (
+                        <button
+                            onClick={onBackToHome}
+                            className="md:hidden mb-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400"
+                        >
+                            ← Back to Home
+                        </button>
+                    )}
                     <div className="mb-10 text-center md:text-left">
-                        <h3 className="text-3xl lg:text-4xl font-black text-slate-900 tracking-tighter mb-2 italic">Create Account</h3>
-                        <p className="text-slate-400 font-bold text-[10px] lg:text-xs uppercase tracking-[0.2em] leading-relaxed">Fill in the details precisely to register.</p>
+                        <h3 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-2">Registration</h3>
+                        <p className="text-slate-400 text-sm">Please fill in details for the new account.</p>
                     </div>
 
                     <form onSubmit={handleRegister} className="space-y-8 lg:space-y-10">
                         {/* Plan Selection UI */}
                         <div className="p-6 lg:p-8 bg-slate-50/50 rounded-[32px] border border-slate-100 space-y-6">
-                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Select Monthly Subscription Plan *</h4>
+                            <h4 className="text-sm font-semibold text-slate-600 ml-1">Monthly Subscription Plan</h4>
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                                 {plans.map(plan => (
                                     <button
                                         key={plan}
                                         type="button"
                                         onClick={() => setSelectedPlan(plan)}
-                                        className={`py-4 px-2 rounded-2xl font-black text-[10px] lg:text-xs uppercase tracking-widest transition-all border-2 ${selectedPlan === plan
-                                            ? 'bg-slate-900 border-slate-900 text-white shadow-xl'
+                                        className={`py-4 px-2 rounded-2xl font-semibold text-sm transition-all border-2 ${selectedPlan === plan
+                                            ? 'bg-slate-900 border-slate-900 text-white shadow-md'
                                             : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300'}`}
                                     >
                                         {plan === 'Custom' ? plan : `₹${parseInt(plan).toLocaleString()}`}
@@ -257,8 +291,8 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
                                         type="number"
                                         value={customAmount}
                                         onChange={(e) => setCustomAmount(e.target.value)}
-                                        placeholder="Enter Custom Amount (₹)"
-                                        className="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 shadow-sm"
+                                        placeholder="Custom Amount (₹)"
+                                        className="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400"
                                     />
                                 </div>
                             )}
@@ -272,8 +306,8 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
                                             key={year}
                                             type="button"
                                             onClick={() => setFormData(prev => ({ ...prev, planDuration: year }))}
-                                            className={`py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border-2 ${formData.planDuration === year
-                                                ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200'
+                                            className={`py-3 rounded-2xl font-semibold text-sm transition-all border-2 ${formData.planDuration === year
+                                                ? 'bg-blue-600 border-blue-600 text-white shadow-md'
                                                 : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300'}`}
                                         >
                                             {year} {parseInt(year) === 1 ? 'Year' : 'Years'}
@@ -304,116 +338,129 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email ID *</label>
                                 <input name="email" value={formData.email} type="email" onChange={handleInputChange} required placeholder="member@email.com" className="w-full bg-slate-50 border border-slate-100 rounded-xl lg:rounded-2xl px-5 lg:px-6 py-4 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-300" />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Set Password</label>
-                                <div className="relative">
-                                    <input
-                                        name="password"
-                                        value={formData.password}
-                                        type={showPassword ? "text" : "password"}
-                                        onChange={handleInputChange}
-                                        required
-                                        placeholder="••••••••"
-                                        className="w-full bg-slate-50 border border-slate-100 rounded-xl lg:rounded-2xl px-5 lg:px-6 py-4 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-300"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors"
-                                    >
-                                        {showPassword ? (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" /></svg>
-                                        ) : (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Confirm Password</label>
-                                <div className="relative">
-                                    <input
-                                        name="confirmPassword"
-                                        value={formData.confirmPassword}
-                                        type={showConfirmPassword ? "text" : "password"}
-                                        onChange={handleInputChange}
-                                        required
-                                        placeholder="••••••••"
-                                        className="w-full bg-slate-50 border border-slate-100 rounded-xl lg:rounded-2xl px-5 lg:px-6 py-4 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-300"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors"
-                                    >
-                                        {showConfirmPassword ? (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" /></svg>
-                                        ) : (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
+                            {!isAdminMode && (
+                                <>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Set Password</label>
+                                        <div className="relative">
+                                            <input
+                                                name="password"
+                                                value={formData.password}
+                                                type={showPassword ? "text" : "password"}
+                                                onChange={handleInputChange}
+                                                required
+                                                placeholder="••••••••"
+                                                className="w-full bg-slate-50 border border-slate-100 rounded-xl lg:rounded-2xl px-5 lg:px-6 py-4 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-300"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors"
+                                            >
+                                                {showPassword ? (
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" /></svg>
+                                                ) : (
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Confirm Password</label>
+                                        <div className="relative">
+                                            <input
+                                                name="confirmPassword"
+                                                value={formData.confirmPassword}
+                                                type={showConfirmPassword ? "text" : "password"}
+                                                onChange={handleInputChange}
+                                                required
+                                                placeholder="••••••••"
+                                                className="w-full bg-slate-50 border border-slate-100 rounded-xl lg:rounded-2xl px-5 lg:px-6 py-4 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-300"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors"
+                                            >
+                                                {showConfirmPassword ? (
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" /></svg>
+                                                ) : (
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
-                        {/* Document Upload Section */}
-                        <div className="p-8 bg-blue-50/50 rounded-[40px] border border-blue-100 space-y-8">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white text-xs">🗂️</div>
-                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Identify Verification Documents *</h4>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                {/* PAN Card */}
-                                <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Upload PAN Card (Photo/PDF)</label>
-                                    <div className={`relative border-2 border-dashed rounded-3xl p-6 transition-all ${formData.panCard ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 hover:border-blue-400 bg-white'}`}>
-                                        <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'panCard')} className="absolute inset-0 opacity-0 cursor-pointer" />
-                                        {formData.panCard ? (
-                                            <div className="flex flex-col items-center gap-2">
-                                                <div className="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center text-white">✓</div>
-                                                <p className="text-[10px] font-black text-emerald-600 uppercase">Attached Successfully</p>
-                                            </div>
-                                        ) : (
-                                            <div className="text-center space-y-2">
-                                                <p className="text-2xl">📸</p>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Click to Upload PAN</p>
-                                            </div>
-                                        )}
-                                    </div>
+                        {!isAdminMode && (
+                            <div className="p-8 bg-blue-50/50 rounded-[40px] border border-blue-100 space-y-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white text-base">📄</div>
+                                    <h4 className="text-sm font-semibold text-slate-600">Identity Proofs</h4>
                                 </div>
 
-                                {/* Aadhar Card */}
-                                <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Upload Aadhar Card (Photo/PDF)</label>
-                                    <div className={`relative border-2 border-dashed rounded-3xl p-6 transition-all ${formData.aadharCard ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 hover:border-blue-400 bg-white'}`}>
-                                        <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'aadharCard')} className="absolute inset-0 opacity-0 cursor-pointer" />
-                                        {formData.aadharCard ? (
-                                            <div className="flex flex-col items-center gap-2">
-                                                <div className="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center text-white">✓</div>
-                                                <p className="text-[10px] font-black text-emerald-600 uppercase">Attached Successfully</p>
-                                            </div>
-                                        ) : (
-                                            <div className="text-center space-y-2">
-                                                <p className="text-2xl">📸</p>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Click to Upload Aadhar</p>
-                                            </div>
-                                        )}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {/* PAN Card */}
+                                    <div className="space-y-4">
+                                        <label className="text-sm font-semibold text-slate-600 ml-1">PAN Card (Photo/PDF)</label>
+                                        <div className={`relative border-2 border-dashed rounded-3xl p-6 transition-all ${formData.panCard ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 hover:border-blue-400 bg-white'}`}>
+                                            <input type="file" accept="image/*,application/pdf" onChange={(e) => handleFileUpload(e, 'panCard')} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                            {formData.panCard ? (
+                                                <div className="flex flex-col items-center gap-3">
+                                                    {formData.panCard.startsWith('data:application/pdf') ? (
+                                                        <div className="w-16 h-16 bg-rose-100 rounded-xl flex items-center justify-center text-rose-500 text-2xl font-black">PDF</div>
+                                                    ) : (
+                                                        <img src={formData.panCard} alt="PAN Preview" className="w-16 h-16 rounded-xl object-cover border border-emerald-200" />
+                                                    )}
+                                                    <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Attached Successfully</p>
+                                                </div>
+                                            ) : (
+                                                <div className="text-center space-y-2">
+                                                    <p className="text-2xl">📸</p>
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Click to Upload PAN</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Aadhar Card */}
+                                    <div className="space-y-4">
+                                        <label className="text-sm font-semibold text-slate-600 ml-1">Aadhar Card (Photo/PDF)</label>
+                                        <div className={`relative border-2 border-dashed rounded-3xl p-6 transition-all ${formData.aadharCard ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 hover:border-blue-400 bg-white'}`}>
+                                            <input type="file" accept="image/*,application/pdf" onChange={(e) => handleFileUpload(e, 'aadharCard')} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                            {formData.aadharCard ? (
+                                                <div className="flex flex-col items-center gap-3">
+                                                    {formData.aadharCard.startsWith('data:application/pdf') ? (
+                                                        <div className="w-16 h-16 bg-rose-100 rounded-xl flex items-center justify-center text-rose-500 text-2xl font-black">PDF</div>
+                                                    ) : (
+                                                        <img src={formData.aadharCard} alt="Aadhar Preview" className="w-16 h-16 rounded-xl object-cover border border-emerald-200" />
+                                                    )}
+                                                    <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Attached Successfully</p>
+                                                </div>
+                                            ) : (
+                                                <div className="text-center space-y-2">
+                                                    <p className="text-2xl">📸</p>
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Click to Upload Aadhar</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
 
                         <div className="pt-6 flex flex-col items-center gap-5">
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`w-full py-5 rounded-2xl font-black text-[10px] lg:text-xs uppercase tracking-[0.2em] shadow-2xl transition-all active:scale-95 ${loading ? 'bg-slate-100 text-slate-300' : 'bg-slate-900 text-white hover:bg-black shadow-slate-200'}`}
+                                className={`w-full py-5 rounded-2xl font-bold text-base shadow-xl transition-all active:scale-95 ${loading ? 'bg-slate-100 text-slate-300' : 'bg-slate-900 text-white hover:bg-black shadow-slate-200'}`}
                             >
-                                {loading ? 'Registering...' : 'Register as Official Member'}
+                                {loading ? (isAdminMode ? 'Adding...' : 'Registering...') : (isAdminMode ? `Add New ${formData.role === 'admin' ? 'Administrator' : 'Member'}` : 'Register Now')}
                             </button>
                             <button type="button" onClick={onBackToLogin} className="text-[10px] lg:text-xs font-black text-slate-400 hover:text-blue-600 transition-all uppercase tracking-widest">
-                                Back to Login
+                                {isAdminMode ? 'Cancel & Go Back' : 'Back to Login'}
                             </button>
                         </div>
                     </form>

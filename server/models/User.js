@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
     pincode: { type: String },
     password: { type: String, required: true },
     role: { type: String, enum: ['admin', 'user'], default: 'user' },
+    isFirstLogin: { type: Boolean, default: false },
     regNo: { type: String, unique: true },
     planAmount: { type: Number, default: 0 },
     planDuration: { type: String, default: '1' },
@@ -18,6 +19,8 @@ const UserSchema = new mongoose.Schema({
     bankName: { type: String },
     accountNumber: { type: String },
     ifscCode: { type: String },
+    branchName: { type: String },
+    accountType: { type: String, enum: ['Saving', 'Current'], default: 'Saving' },
     financials: {
         collection: {
             status: { type: String, default: 'due' },

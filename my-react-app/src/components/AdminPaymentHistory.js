@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function AdminPaymentHistory({ members = [], onViewReceipt }) {
+    const { t } = useLanguage()
     const [searchTerm, setSearchTerm] = useState('')
 
     // Aggregate payment history from all members
@@ -34,8 +36,8 @@ export default function AdminPaymentHistory({ members = [], onViewReceipt }) {
             {/* Header & Filter Section */}
             <div className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[40px] border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
-                    <h3 className="text-xl lg:text-3xl font-black text-slate-900 tracking-tighter italic">Global Ledger</h3>
-                    <p className="text-[10px] lg:text-xs font-bold text-slate-400 mt-2 uppercase tracking-[0.2em]">Full transaction records for all members</p>
+                    <h3 className="text-xl lg:text-3xl font-bold text-slate-900 tracking-tight">Transaction History</h3>
+                    <p className="text-xs lg:text-sm font-medium text-slate-400 mt-2">Full records for all members</p>
                 </div>
 
                 <div className="relative w-full md:w-96">
@@ -75,7 +77,7 @@ export default function AdminPaymentHistory({ members = [], onViewReceipt }) {
                                                     {item?.memberName?.charAt(0) || '?'}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="text-sm lg:text-base font-black text-slate-900 leading-tight truncate">{item.memberName}</p>
+                                                    <p className="text-sm lg:text-base font-bold text-slate-900 leading-tight truncate">{item.memberName}</p>
                                                     <p className="text-[9px] lg:text-[11px] font-bold text-slate-400 uppercase tracking-tight mt-1 truncate">{item.memberEmail}</p>
                                                 </div>
                                             </div>
@@ -93,7 +95,7 @@ export default function AdminPaymentHistory({ members = [], onViewReceipt }) {
                                             </div>
                                         </td>
                                         <td className="px-6 lg:px-10 py-5 lg:py-8">
-                                            <p className="text-base lg:text-lg font-black text-slate-900 tracking-tight italic">₹{item.amount.toLocaleString()}</p>
+                                            <p className="text-base lg:text-lg font-bold text-slate-900 tracking-tight">₹{item.amount.toLocaleString()}</p>
                                         </td>
                                         <td className="px-6 lg:px-10 py-5 lg:py-8 font-bold text-slate-500 text-[11px] lg:text-sm whitespace-nowrap">
                                             {item.date}
@@ -130,19 +132,19 @@ export default function AdminPaymentHistory({ members = [], onViewReceipt }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 <div className="bg-[#1e293b] p-8 lg:p-10 rounded-3xl lg:rounded-[40px] text-white shadow-2xl relative overflow-hidden group">
                     <div className="relative z-10">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 lg:mb-4">Total Volume</p>
-                        <h4 className="text-2xl lg:text-3xl font-black italic tracking-tighter">₹{filteredHistory.reduce((sum, item) => sum + item.amount, 0).toLocaleString()}</h4>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 lg:mb-4">Total Amount</p>
+                        <h4 className="text-2xl lg:text-3xl font-bold tracking-tight">₹{filteredHistory.reduce((sum, item) => sum + item.amount, 0).toLocaleString()}</h4>
                     </div>
                 </div>
                 <div className="bg-emerald-500 p-8 lg:p-10 rounded-3xl lg:rounded-[40px] text-white shadow-2xl relative overflow-hidden">
                     <div className="relative z-10">
-                        <p className="text-[10px] font-black text-emerald-100 uppercase tracking-[0.2em] mb-3 lg:mb-4">Transactions</p>
-                        <h4 className="text-2xl lg:text-3xl font-black italic tracking-tighter">{filteredHistory.length} Total</h4>
+                        <p className="text-[10px] font-bold text-emerald-100 uppercase tracking-widest mb-3 lg:mb-4">Transactions</p>
+                        <h4 className="text-2xl lg:text-3xl font-bold tracking-tight">{filteredHistory.length} Total</h4>
                     </div>
                 </div>
                 <div className="bg-white border border-slate-100 p-8 lg:p-10 rounded-3xl lg:rounded-[40px] shadow-sm sm:col-span-2 lg:col-span-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 lg:mb-4">Latest Process</p>
-                    <h4 className="text-2xl lg:text-3xl font-black text-slate-900 italic tracking-tighter">Verified Active</h4>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 lg:mb-4">Status</p>
+                    <h4 className="text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">Active</h4>
                 </div>
             </div>
         </div>

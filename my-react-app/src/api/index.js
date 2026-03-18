@@ -1,5 +1,5 @@
 const resolveApiUrl = () => {
-    let url = import.meta.env.VITE_API_URL || 'http://192.168.1.4:5000';
+    let url = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     // Ensure absolute URL and ends with /api
     if (!url.startsWith('http')) {
         // If it's a relative hostname provided by Render (like 'apna-bank-api:10000')
@@ -63,6 +63,15 @@ export const registerUser = async (userData) => {
         body: JSON.stringify(userData)
     });
     return handleResponse(res, 'Registration failed');
+};
+
+export const changePassword = async (userId, oldPassword, newPassword) => {
+    const res = await fetch(`${API_URL}/auth/change-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, oldPassword, newPassword })
+    });
+    return handleResponse(res, 'Failed to change password');
 };
 
 export const getStats = async () => {
@@ -154,4 +163,42 @@ export const saveReceipt = async (receiptData) => {
 export const getReceipt = async (transactionId) => {
     const res = await fetch(`${API_URL}/transactions/receipt/${transactionId}`);
     return handleResponse(res, 'Receipt not found');
+};
+
+// Loan Request APIs
+export const requestLoan = async (loanData) => {
+    const res = await fetch(`${API_URL}/loans/request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loanData)
+    });
+    return handleResponse(res, 'Failed to submit loan request');
+};
+
+export const fetchAllLoanRequests = async () => {
+    const res = await fetch(`${API_URL}/loans/all`);
+    return handleResponse(res, 'Failed to fetch loan requests');
+};
+
+export const fetchUserLoanRequests = async (userId) => {
+    const res = await fetch(`${API_URL}/loans/user/${userId}`);
+    return handleResponse(res, 'Failed to fetch your loan requests');
+};
+
+export const updateLoanStatus = async (requestId, status, adminRemarks) => {
+    const res = await fetch(`${API_URL}/loans/status/${requestId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, adminRemarks })
+    });
+    return handleResponse(res, 'Failed to update loan status');
+};
+
+export const payLoan = async (requestId, loanDetails) => {
+    const res = await fetch(`${API_URL}/loans/pay/${requestId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loanDetails)
+    });
+    return handleResponse(res, 'Failed to process loan payment');
 };
