@@ -32,6 +32,15 @@ app.use('/api/loans', require('./routes/loanRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 
+// Basic Health Check for API
+app.get('/api', (req, res) => {
+    res.json({ 
+        message: 'APNA SOCIETY API is running correctly!',
+        timestamp: new Date().toISOString(),
+        version: '1.2.0'
+    });
+});
+
 // Static Files and Client Rendering
 const clientPath = path.join(__dirname, '../my-react-app/dist');
 app.use(express.static(clientPath));
