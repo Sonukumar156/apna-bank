@@ -168,7 +168,7 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
     }
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center bg-[#f0f2f5] p-4 lg:p-6 font-['Inter',_sans-serif]">
+        <div className={`${isAdminMode ? '' : 'min-h-screen'} w-full flex items-center justify-center bg-[#f0f2f5] p-4 lg:p-6 font-['Inter',_sans-serif]`}>
 
             {/* Premium Floating Toast with Progress Bar */}
             {notification.show && (
@@ -271,13 +271,13 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
                         {/* Plan Selection UI */}
                         <div className="p-6 lg:p-8 bg-slate-50/50 rounded-[32px] border border-slate-100 space-y-6">
                             <h4 className="text-sm font-semibold text-slate-600 ml-1">Monthly Subscription Plan</h4>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+                            <div className="flex flex-wrap gap-2 md:gap-3">
                                 {plans.map(plan => (
                                     <button
                                         key={plan}
                                         type="button"
                                         onClick={() => setSelectedPlan(plan)}
-                                        className={`py-3 md:py-4 px-1 md:px-2 rounded-xl md:rounded-2xl font-black text-xs md:text-sm transition-all border-2 ${selectedPlan === plan
+                                        className={`py-3 md:py-4 px-4 md:px-6 rounded-xl md:rounded-2xl font-black text-xs md:text-sm transition-all border-2 flex-grow sm:flex-grow-0 min-w-[100px] ${selectedPlan === plan
                                             ? 'bg-slate-900 border-slate-900 text-white shadow-md'
                                             : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300'}`}
                                     >
@@ -299,14 +299,14 @@ export default function Register({ onBackToLogin, onBackToHome, onRegisterSucces
 
                             {/* Plan Duration Selection */}
                             <div className="pt-4 space-y-4">
-                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">How many years? *</h4>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Plan Duration *</h4>
+                                <div className="flex flex-wrap gap-2 md:gap-3">
                                     {durations.map(year => (
                                         <button
                                             key={year}
                                             type="button"
                                             onClick={() => setFormData(prev => ({ ...prev, planDuration: year }))}
-                                            className={`py-3 rounded-xl md:rounded-2xl font-black text-xs md:text-sm transition-all border-2 ${formData.planDuration === year
+                                            className={`py-3 px-4 md:px-6 rounded-xl md:rounded-2xl font-black text-xs md:text-sm transition-all border-2 flex-grow sm:flex-grow-0 min-w-[90px] ${formData.planDuration === year
                                                 ? 'bg-blue-600 border-blue-600 text-white shadow-md'
                                                 : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300'}`}
                                         >
