@@ -46,28 +46,57 @@ exports.deleteMember = async (req, res) => {
 
 exports.getAllStats = async (req, res) => {
     try {
-        const members = await User.find({ role: 'user' }).lean();
-        const transactions = await Transaction.find().sort({ createdAt: -1 }).lean();
+        // Parallel fetching for performance
+        const [members, transactions, aggStats] = await Promise.all([
+            User.find({ role: 'user' }).select('-password').lean(),
+            Transaction.find().sort({ createdAt: -1 }).limit(100).lean(), // Limit to latest 100 for dashboard
+            User.aggregate([
+                { $match: { role: 'user' } },
+                {
+                    $group: {
+                        _id: null,
+                        totalCollection: { $sum: { $ifNull: ["$financials.collection.amount", 0] } },
+                        pendingAmount: { 
+                            $sum: { 
+                                $cond: [
+                                    { $eq: ["$financials.collection.status", "due"] },
+                                    { $ifNull: ["$planAmount", 1000] },
+                                    0
+                                ] 
+                            } 
+                        },
+                        outstandingLoan: { $sum: { $ifNull: ["$financials.loan.remaining", 0] } },
+                        activeLoans: { $sum: { $cond: ["$financials.loan.active", 1, 0] } }
+                    }
+                }
+            ])
+        ]);
 
-        // Attach history to each member for backward compatibility with frontend components
+        const statsResult = aggStats[0] || { totalCollection: 0, pendingAmount: 0, outstandingLoan: 0, activeLoans: 0 };
+
+        // Efficient Transaction Map for O(N+M) history attachment
+        const txnMap = new Map();
+        transactions.forEach(t => {
+            const userId = t.userId.toString();
+            if (!txnMap.has(userId)) txnMap.set(userId, []);
+            txnMap.get(userId).push(t);
+        });
+
         const membersWithHistory = members.map(m => ({
             ...m,
-            history: transactions.filter(t => t.userId.toString() === m._id.toString())
+            history: txnMap.get(m._id.toString()) || []
         }));
-
-        const totalCollection = members.reduce((sum, m) => sum + (m.financials.collection.amount || 0), 0);
-        const pendingAmount = members.reduce((sum, m) => sum + (m.financials.collection.status === 'due' ? (m.planAmount || 1000) : 0), 0);
-        const outstandingLoan = members.reduce((sum, m) => sum + (m.financials.loan.remaining || 0), 0);
-        const activeLoans = members.filter(m => m.financials.loan.active).length;
 
         const stats = {
             totalMembers: members.length,
-            totalCollection,
-            pendingAmount,
-            outstandingLoan: outstandingLoan.toFixed(0),
-            activeLoans,
-            totalInterest: transactions.filter(t => t.type === 'Loan Payment').reduce((sum, t) => sum + (t.amount * 0.05), 0) // Example calculation
+            totalCollection: statsResult.totalCollection,
+            pendingAmount: statsResult.pendingAmount,
+            outstandingLoan: statsResult.outstandingLoan.toFixed(0),
+            activeLoans: statsResult.activeLoans,
+            totalInterest: transactions.reduce((sum, t) => 
+                t.type === 'Loan Payment' ? sum + (t.amount * 0.05) : sum, 0)
         };
+        
         res.json({ members: membersWithHistory, stats });
     } catch (error) {
         res.status(500).json({ message: error.message });
