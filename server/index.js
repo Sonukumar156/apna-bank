@@ -34,10 +34,12 @@ app.use('/api/contact', require('./routes/contactRoutes'));
 
 // Basic Health Check for API
 app.get('/api', (req, res) => {
+    const mongoose = require('mongoose');
     res.json({ 
         message: 'APNA SOCIETY API is running correctly!',
         timestamp: new Date().toISOString(),
-        version: '1.2.0'
+        version: '1.2.0',
+        dbStatus: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
     });
 });
 
@@ -46,7 +48,7 @@ const clientPath = path.join(__dirname, '../my-react-app/dist');
 app.use(express.static(clientPath));
 
 // Catch-all route for SPA handling
-app.get('*', (req, res) => {
+app.use((req, res) => {
     if (!req.url.startsWith('/api')) {
         res.sendFile(path.join(clientPath, 'index.html'));
     } else {
